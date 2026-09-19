@@ -25,6 +25,10 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
 app = FastAPI()
 
+
+def send_coupon_email(email, coupon):
+    pass
+
 @app.get("/")
 def home():
     return "Welcome to fastAPI"
