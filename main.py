@@ -29,6 +29,33 @@ app = FastAPI()
 def send_coupon_email(email, coupon):
     pass
 
+def send_coupon_email(email, coupon):
+    params = {
+        "from": "onboarding@resend.dev",
+        "to": [email],
+        "subject": "Your Onam Sadhya Coupon",
+        "html": f"""
+            <h2>Onam Sadhya 🎉</h2>
+            <p>Your payment was successful.</p>
+            <p>Your coupon code is:</p>
+            <h3>{coupon}</h3>
+            <p>Thank you for your order!</p>
+        """
+    }
+
+    email = resend.Emails.send(params)
+
+    return email
+
+@app.get("/test-email")
+def test_email():
+    result = send_coupon_email(
+        "shanid22392239@gmail.com",
+        "SADHYA-TEST123"
+    )
+
+    return result
+
 @app.get("/")
 def home():
     return "Welcome to fastAPI"
