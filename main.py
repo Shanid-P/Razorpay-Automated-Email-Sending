@@ -6,10 +6,13 @@ app = FastAPI()
 def home():
     return "Welcome to fastAPI"
 
+
 @app.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request):
+    print("🔥 WEBHOOK RECEIVED")
+
     data = await request.json()
 
-    print(data)
+    print("DATA:", data)
 
     return {"status": "received"}
