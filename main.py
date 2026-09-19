@@ -19,38 +19,84 @@ Base.metadata.create_all(bind=engine)
 import random
 import string
 
-import os
-
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+#RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
 app = FastAPI()
 
-def send_coupon_email(email, coupon):
-    params = {
-        "from": "onboarding@resend.dev",
-        "to": [email],
-        "subject": "Your Onam Sadhya Coupon",
-        "html": f"""
-            <h2>Onam Sadhya 🎉</h2>
-            <p>Your payment was successful.</p>
-            <p>Your coupon code is:</p>
-            <h3>{coupon}</h3>
-            <p>Thank you for your order!</p>
-        """
-    }
+# import resend
 
-    email = resend.Emails.send(params)
+# def send_coupon_email(email, coupon):
+#     params = {
+#         "from": "onboarding@resend.dev",
+#         "to": ["pazhayangadi2006@gmail.com"],
+#         "subject": "Your Onam Sadhya Coupon",
+#         "html": f"""
+#             <h2>Onam Sadhya 🎉</h2>
+#             <p>Your payment was successful.</p>
+#             <p>Your coupon code is:</p>
+#             <h3>{coupon}</h3>
+#             <p>Thank you for your order!</p>
+#         """
+#     }
 
-    return email
+#     return resend.Emails.send(params)
 
-@app.get("/test-email")
-def test_email():
-    result = send_coupon_email(
-        "shanid22392239@gmail.com",
-        "SADHYA-TEST123"
+# @app.get("/test-email")
+# def test_email():
+#     return send_coupon_email(
+#         "pazhayangadi2006@gmail.com",
+#         "SADHYA-TEST123"
+#     )
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+import os
+import requests
+
+MJ_API_KEY = os.getenv("MJ_API_KEY")
+MJ_SECRET_KEY = os.getenv("MJ_SECRET_KEY")
+MJ_SENDER_EMAIL = os.getenv("MJ_SENDER_EMAIL")
+
+
+def send_test_email( email, coupon):
+    response = requests.post(
+        "https://api.mailjet.com/v3.1/send",
+        auth=(MJ_API_KEY, MJ_SECRET_KEY),
+        json={
+            "Messages": [
+                {
+                    "From": {
+                        "Email": MJ_SENDER_EMAIL,
+                        "Name": "Onam Sadhya"
+                    },
+                    "To": [
+                        {
+                            "Email": email,
+                        }
+                    ],
+                    "Subject": "Your Onam Sadhya Coupon",
+                    "HTMLPart": f"""
+                         <h2>Onam Sadhya 🎉</h2>
+                         <p>Your payment was successful.</p>
+                         <p>Your coupon code is:</p>
+                         <h3>{coupon}</h3>
+                         <p>Thank you for your order!</p>
+                     """
+                }
+            ]
+        }
     )
-
-    return result
+    
+    return {
+        "status_code": response.status_code,
+        "response": response.json()
+    }
+    
+# @app.get("/test-email")
+# def test_email():
+#     return send_test_email()
 
 @app.get("/")
 def home():
@@ -112,5 +158,15 @@ async def razorpay_webhook(request: Request, db : Session = Depends(get_db)):
         db.add(new_order)
         db.commit()
         db.refresh(new_order)
+        
+        try:
+            send_test_email(email, coupon_id_comp)
+            new_order.email_status = "sent"
+
+        except Exception as e:
+            print("EMAIL ERROR:", e)
+            new_order.email_status = "failed"
+
+        db.commit()
         
         return {"status": "Payment Success"}
