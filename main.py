@@ -25,10 +25,6 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
 app = FastAPI()
 
-
-def send_coupon_email(email, coupon):
-    pass
-
 def send_coupon_email(email, coupon):
     params = {
         "from": "onboarding@resend.dev",
