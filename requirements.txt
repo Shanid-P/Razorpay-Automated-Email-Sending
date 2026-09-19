@@ -3,4 +3,3 @@ uvicorn[standard]>=0.22.0
 sqlalchemy
 pydantic
 python-multipart
-os
