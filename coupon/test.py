@@ -10,7 +10,7 @@ def generate_coupon(coupon):
     template = Image.open("coupon.png")
     draw = ImageDraw.Draw(template)
 
-    font_size = 48
+    font_size = 36
     text = coupon
     position = (210, 253)
     text_color = "black"
