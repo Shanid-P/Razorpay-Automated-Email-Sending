@@ -10,7 +10,7 @@ def generate_coupon(coupon):
     template = Image.open("coupon.png")
     draw = ImageDraw.Draw(template)
 
-    font_size = 36
+    font_size = 48
     text = coupon
     position = (210, 253)
     text_color = "black"
@@ -65,3 +65,4 @@ def generate_coupon(coupon):
     
     return base64_encoded_image
 
+generate_coupon("SADHYA-G4EBN9")
