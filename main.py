@@ -161,7 +161,13 @@ def send_test_email( email, coupon):
                          <h3>{coupon}</h3>
                          <p>Thank you for your order!</p>
                      """,
-                     
+                     "Attachments" : [
+                         {
+                             "ContentType": "image/png",
+                             "Filename": "coupon.png",
+                             "Base64Content": generated_coupon
+                         }
+                     ]
                 }
             ]
         }
